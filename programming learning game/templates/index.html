@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Learning Adventure</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+        }
+        
+        .header {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff7ae9, #7aaeff, #4df0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(122, 174, 255, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: #a0a0d0;
+            margin-bottom: 30px;
+        }
+        
+        .game-area {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .character-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(20, 20, 35, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid #34345e;
+        }
+        
+        .character {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, #7aaeff, #4df0ff);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 80px;
+            color: #1a1a2e;
+            box-shadow: 0 0 30px rgba(122, 174, 255, 0.7);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .character-dialog {
+            background: rgba(40, 40, 70, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 20px;
+            border: 2px solid #4df0ff;
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .character-dialog:after {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 10px solid transparent;
+            border-bottom-color: #4df0ff;
+        }
+        
+        .coding-section {
+            flex: 2;
+            min-width: 400px;
+            background: rgba(20, 20, 35, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid #34345e;
+            text-align: left;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #34345e;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: rgba(40, 40, 70, 0.5);
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: rgba(77, 240, 255, 0.2);
+            border-bottom: 3px solid #4df0ff;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .challenge-title {
+            color: #7aaeff;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .challenge-desc {
+            background: rgba(30, 30, 50, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ff7ae9;
+        }
+        
+        .code-editor {
+            background: #1e1e2e;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            font-family: 'Courier New', monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .code-line {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .line-number {
+            color: #6e7681;
+            margin-right: 15px;
+            width: 25px;
+            text-align: right;
+        }
+        
+        .code-input {
+            background: transparent;
+            border: 1px solid #34345e;
+            border-radius: 5px;
+            padding: 8px;
+            color: #d0d0ff;
+            font-family: 'Courier New', monospace;
+            width: 200px;
+        }
+        
+        .code-select {
+            background: rgba(40, 40, 70, 0.9);
+            border: 1px solid #34345e;
+            border-radius: 5px;
+            padding: 8px;
+            color: #d0d0ff;
+            font-family: 'Courier New', monospace;
+            width: 200px;
+        }
+        
+        .hint {
+            color: #ff7ae9;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        button.run {
+            background: linear-gradient(45deg, #4df0ff, #7aaeff);
+            color: #1a1a2e;
+        }
+        
+        button.hint {
+            background: linear-gradient(45deg, #ff7ae9, #ff5c8d);
+            color: white;
+        }
+        
+        button.reset {
+            background: linear-gradient(45deg, #34345e, #1a1a2e);
+            color: white;
+            border: 1px solid #4df0ff;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        button i {
+            margin-right: 8px;
+        }
+        
+        .progress-section {
+            background: rgba(20, 20, 35, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid #34345e;
+        }
+        
+        .progress-title {
+            color: #7aaeff;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #1a1a2e;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #4df0ff, #7aaeff);
+            border-radius: 10px;
+            width: 30%;
+            transition: width 0.5s ease;
+        }
+        
+        .concepts {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .concept {
+            background: rgba(40, 40, 70, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 150px;
+            border: 1px solid #4df0ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .concept:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .concept.active {
+            background: rgba(77, 240, 255, 0.2);
+            border: 2px solid #4df0ff;
+        }
+        
+        .concept i {
+            font-size: 2rem;
+            color: #7aaeff;
+            margin-bottom: 10px;
+        }
+        
+        .feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(40, 40, 70, 0.9);
+            border: 2px solid #4df0ff;
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+            max-width: 350px;
+            z-index: 100;
+        }
+        
+        .feedback.show {
+            transform: translateX(0);
+        }
+        
+        .output-window {
+            background: #1e1e2e;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            min-height: 100px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #34345e;
+        }
+        
+        .output-line {
+            margin-bottom: 8px;
+            color: #d0d0ff;
+        }
+        
+        .success {
+            color: #4df0ff;
+        }
+        
+        .error {
+            color: #ff5c8d;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Flask Learning Adventure</h1>
+            <p class="subtitle">Learn Flask Python Web Development with Py and Flasky!</p>
+        </div>
+        
+        <div class="game-area">
+            <div class="character-section">
+                <div class="character">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h2>Py & Flasky</h2>
+                <p>Your Flask guides</p>
+                
+                <div class="character-dialog">
+                    <p id="dialog-text">Welcome to Flask Learning! Let's start with routing - the core of web frameworks!</p>
+                </div>
+            </div>
+            
+            <div class="coding-section">
+                <div class="tabs">
+                    <div class="tab active" data-tab="routing">Routing</div>
+                    <div class="tab" data-tab="templates">Templates</div>
+                    <div class="tab" data-tab="forms">Forms</div>
+                    <div class="tab" data-tab="database">Database</div>
+                </div>
+                
+                <div class="tab-content active" id="routing-content">
+                    <h2 class="challenge-title">Challenge #1: Basic Routing</h2>
+                    
+                    <div class="challenge-desc">
+                        <p>In Flask, routes map URLs to Python functions. Use the <code>@app.route()</code> decorator to define routes.</p>
+                    </div>
+                    
+                    <div class="code-editor">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span>from flask import Flask</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span>app = Flask(__name__)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>@app.route('/')</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>def home():</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>    return "</span>
+                            <input type="text" class="code-input" id="route-input" placeholder="Enter welcome message">
+                            <span>"</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>if __name__ == '__main__':</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">9</span>
+                            <span>    app.run(debug=True)</span>
+                        </div>
+                    </div>
+                    
+                    <p class="hint"><i class="fas fa-lightbulb"></i> Hint: The route decorator tells Flask what URL should trigger our function</p>
+                    
+                    <div class="buttons">
+                        <button class="run" id="run-routing"><i class="fas fa-play"></i> Run Code</button>
+                        <button class="hint" id="hint-routing"><i class="fas fa-question-circle"></i> Explain Routing</button>
+                        <button class="reset" id="reset-routing"><i class="fas fa-redo"></i> Reset</button>
+                    </div>
+                    
+                    <div class="output-window" id="routing-output">
+                        <div class="output-line">Output will appear here after running code...</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="templates-content">
+                    <h2 class="challenge-title">Challenge #2: Using Templates</h2>
+                    
+                    <div class="challenge-desc">
+                        <p>Flask uses Jinja2 templating to separate HTML from Python code. Use <code>render_template()</code> to render HTML files.</p>
+                    </div>
+                    
+                    <div class="code-editor">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span>from flask import Flask, render_template</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span>app = Flask(__name__)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>@app.route('/user/</span>
+                            <select class="code-select" id="template-select">
+                                <option value="&lt;name&gt;">&lt;name&gt;</option>
+                                <option value="&lt;username&gt;">&lt;username&gt;</option>
+                                <option value="&lt;string:name&gt;">&lt;string:name&gt;</option>
+                            </select>
+                            <span>')</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>def user_profile(name):</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>    return render_template('profile.html', name=</span>
+                            <input type="text" class="code-input" id="template-input" placeholder="variable name">
+                            <span>)</span>
+                        </div>
+                    </div>
+                    
+                    <p class="hint"><i class="fas fa-lightbulb"></i> Hint: Templates allow you to create dynamic HTML pages with placeholders</p>
+                    
+                    <div class="buttons">
+                        <button class="run" id="run-template"><i class="fas fa-play"></i> Run Code</button>
+                        <button class="hint" id="hint-template"><i class="fas fa-question-circle"></i> Explain Templates</button>
+                        <button class="reset" id="reset-template"><i class="fas fa-redo"></i> Reset</button>
+                    </div>
+                    
+                    <div class="output-window" id="template-output">
+                        <div class="output-line">Output will appear here after running code...</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="forms-content">
+                    <h2 class="challenge-title">Challenge #3: Handling Forms</h2>
+                    
+                    <div class="challenge-desc">
+                        <p>Flask can handle form data submitted by users. Use <code>request.form</code> to access form data.</p>
+                    </div>
+                    
+                    <div class="code-editor">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span>from flask import Flask, render_template, request</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span>app = Flask(__name__)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>@app.route('/login', methods=[</span>
+                            <select class="code-select" id="methods-select">
+                                <option value="'GET'">'GET'</option>
+                                <option value="'POST'">'POST'</option>
+                                <option value="['GET', 'POST']">['GET', 'POST']</option>
+                            </select>
+                            <span>])</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>def login():</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>    if request.method == 'POST':</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span>        username = request.form['username']</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>        return f"Welcome {username}!"</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">9</span>
+                            <span>    return render_template('login.html')</span>
+                        </div>
+                    </div>
+                    
+                    <p class="hint"><i class="fas fa-lightbulb"></i> Hint: Forms need specific HTTP methods to handle submissions properly</p>
+                    
+                    <div class="buttons">
+                        <button class="run" id="run-forms"><i class="fas fa-play"></i> Run Code</button>
+                        <button class="hint" id="hint-forms"><i class="fas fa-question-circle"></i> Explain Forms</button>
+                        <button class="reset" id="reset-forms"><i class="fas fa-redo"></i> Reset</button>
+                    </div>
+                    
+                    <div class="output-window" id="forms-output">
+                        <div class="output-line">Output will appear here after running code...</div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="database-content">
+                    <h2 class="challenge-title">Challenge #4: Database Integration</h2>
+                    
+                    <div class="challenge-desc">
+                        <p>Flask can connect to databases using extensions like Flask-SQLAlchemy for database operations.</p>
+                    </div>
+                    
+                    <div class="code-editor">
+                        <div class="code-line">
+                            <span class="line-number">1</span>
+                            <span>from flask import Flask</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">2</span>
+                            <span>from flask_sqlalchemy import SQLAlchemy</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">3</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">4</span>
+                            <span>app = Flask(__name__)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">5</span>
+                            <span>app.config['SQLALCHEMY_DATABASE_URI'] = '</span>
+                            <select class="code-select" id="db-select">
+                                <option value="sqlite">sqlite:///app.db</option>
+                                <option value="postgres">postgresql://localhost/mydb</option>
+                                <option value="mysql">mysql://username:password@localhost/mydb</option>
+                            </select>
+                            <span>'</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">6</span>
+                            <span>db = SQLAlchemy(app)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">7</span>
+                            <span></span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">8</span>
+                            <span>class User(db.Model):</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">9</span>
+                            <span>    id = db.Column(db.Integer, primary_key=True)</span>
+                        </div>
+                        <div class="code-line">
+                            <span class="line-number">10</span>
+                            <span>    username = db.Column(db.String(80), unique=True, nullable=False)</span>
+                        </div>
+                    </div>
+                    
+                    <p class="hint"><i class="fas fa-lightbulb"></i> Hint: ORM (Object-Relational Mapping) lets you interact with databases using Python classes</p>
+                    
+                    <div class="buttons">
+                        <button class="run" id="run-database"><i class="fas fa-play"></i> Run Code</button>
+                        <button class="hint" id="hint-database"><i class="fas fa-question-circle"></i> Explain Databases</button>
+                        <button class="reset" id="reset-database"><i class="fas fa-redo"></i> Reset</button>
+                    </div>
+                    
+                    <div class="output-window" id="database-output">
+                        <div class="output-line">Output will appear here after running code...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <h2 class="progress-title">Your Flask Learning Progress</h2>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            
+            <p id="progress-text">You've completed 30% of the Flask concepts!</p>
+            
+            <div class="concepts">
+                <div class="concept active" data-concept="routing">
+                    <i class="fas fa-route"></i>
+                    <h3>Routing</h3>
+                    <p>In Progress</p>
+                </div>
+                
+                <div class="concept" data-concept="templates">
+                    <i class="fas fa-file-code"></i>
+                    <h3>Templates</h3>
+                    <p>Locked</p>
+                </div>
+                
+                <div class="concept" data-concept="forms">
+                    <i class="fas fa-window-restore"></i>
+                    <h3>Forms</h3>
+                    <p>Locked</p>
+                </div>
+                
+                <div class="concept" data-concept="database">
+                    <i class="fas fa-database"></i>
+                    <h3>Database</h3>
+                    <p>Locked</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="feedback" id="feedback">
+        <p><i class="fas fa-check-circle"></i> Correct! You've learned about Flask routing!</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dialogText = document.getElementById('dialog-text');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const feedback = document.getElementById('feedback');
+            const tabs = document.querySelectorAll('.tab');
+            const concepts = document.querySelectorAll('.concept');
+            
+            let progress = 30;
+            let currentTab = 'routing';
+            
+            // Update progress bar
+            function updateProgress(value) {
+                progress = value;
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = `You've completed ${progress}% of the Flask concepts!`;
+            }
+            
+            // Show feedback message
+            function showFeedback(message, isError = false) {
+                feedback.innerHTML = `<p><i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}</p>`;
+                feedback.classList.add('show');
+                
+                setTimeout(function() {
+                    feedback.classList.remove('show');
+                }, 3000);
+            }
+            
+            // Tab switching functionality
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Update tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabName}-content`).classList.add('active');
+                    
+                    // Update current tab
+                    currentTab = tabName;
+                    
+                    // Update dialog based on tab
+                    switch(tabName) {
+                        case 'routing':
+                            dialogText.textContent = "Routing maps URLs to Python functions. It's the core of any web framework!";
+                            break;
+                        case 'templates':
+                            dialogText.textContent = "Templates help separate HTML from Python code. Flask uses Jinja2 templating!";
+                            break;
+                        case 'forms':
+                            dialogText.textContent = "Forms handle user input. Remember to validate data on the server side!";
+                            break;
+                        case 'database':
+                            dialogText.textContent = "Databases store application data. Flask works well with SQLAlchemy ORM!";
+                            break;
+                    }
+                });
+            });
+            
+            // Concept clicking functionality
+            concepts.forEach(concept => {
+                concept.addEventListener('click', function() {
+                    const conceptName = this.getAttribute('data-concept');
+                    
+                    // Find and click the corresponding tab
+                    tabs.forEach(tab => {
+                        if (tab.getAttribute('data-tab') === conceptName) {
+                            tab.click();
+                        }
+                    });
+                });
+            });
+            
+            // Routing tab functionality
+            document.getElementById('run-routing').addEventListener('click', function() {
+                const input = document.getElementById('route-input').value.trim();
+                
+                if (input === '') {
+                    showFeedback('Please enter a welcome message first!', true);
+                    return;
+                }
+                
+                document.getElementById('routing-output').innerHTML = `
+                    <div class="output-line success">* Running Flask development server...</div>
+                    <div class="output-line">* Debug mode: on</div>
+                    <div class="output-line">* Server started on http://127.0.0.1:5000</div>
+                    <div class="output-line">* Home route returning: "${input}"</div>
+                `;
+                
+                showFeedback('Correct! Your Flask app is now running with a home route!');
+                updateProgress(50);
+                document.querySelector('.concept[data-concept="routing"] p').textContent = 'Completed!';
+                document.querySelector('.concept[data-concept="templates"] p').textContent = 'Available';
+                document.querySelector('.concept[data-concept="templates"]').classList.add('active');
+            });
+            
+            document.getElementById('hint-routing').addEventListener('click', function() {
+                showFeedback('Routes define what content users see at specific URLs. The @app.route() decorator is used to bind functions to URLs.');
+            });
+            
+            document.getElementById('reset-routing').addEventListener('click', function() {
+                document.getElementById('route-input').value = '';
+                document.getElementById('routing-output').innerHTML = '<div class="output-line">Output will appear here after running code...</div>';
+                showFeedback('Code has been reset. Try creating a route again!');
+            });
+            
+            // Templates tab functionality
+            document.getElementById('run-template').addEventListener('click', function() {
+                const select = document.getElementById('template-select');
+                const input = document.getElementById('template-input').value.trim();
+                
+                if (input === '') {
+                    showFeedback('Please enter the variable name first!', true);
+                    return;
+                }
+                
+                if (select.value !== '<string:name>') {
+                    showFeedback('Try selecting the correct route parameter syntax.', true);
+                    return;
+                }
+                
+                if (input !== 'name') {
+                    showFeedback('The variable name should match the route parameter.', true);
+                    return;
+                }
+                
+                document.getElementById('template-output').innerHTML = `
+                    <div class="output-line success">* Template rendered successfully!</div>
+                    <div class="output-line">* Route parameter: ${select.value}</div>
+                    <div class="output-line">* Variable passed to template: ${input}</div>
+                    <div class="output-line">* Template file: profile.html</div>
+                `;
+                
+                showFeedback('Great! You successfully created a dynamic route with template rendering!');
+                updateProgress(70);
+                document.querySelector('.concept[data-concept="templates"] p').textContent = 'Completed!';
+                document.querySelector('.concept[data-concept="forms"] p').textContent = 'Available';
+                document.querySelector('.concept[data-concept="forms"]').classList.add('active');
+            });
+            
+            document.getElementById('hint-template').addEventListener('click', function() {
+                showFeedback('Templates allow you to generate HTML dynamically. Route parameters in angle brackets capture values from the URL.');
+            });
+            
+            document.getElementById('reset-template').addEventListener('click', function() {
+                document.getElementById('template-select').value = '<name>';
+                document.getElementById('template-input').value = '';
+                document.getElementById('template-output').innerHTML = '<div class="output-line">Output will appear here after running code...</div>';
+                showFeedback('Code has been reset. Try creating a template route again!');
+            });
+            
+            // Initialize the game
+            setTimeout(function() {
+                showFeedback('Welcome to Flask Learning Adventure! Let\'s start with routing.');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
