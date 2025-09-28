@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shape Area & Volume Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Shape Calculator</h1>
+            <p class="subtitle">Calculate Area, Volume, and Surface Area for Various Shapes</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="shape-selector">
+                <h2>Select a Shape</h2>
+                <div class="shape-list">
+                    <!-- 2D Shapes -->
+                    <div class="shape-item" data-shape="rectangle">
+                        <div class="shape-icon">▭</div>
+                        <div class="shape-name">Rectangle</div>
+                    </div>
+                    <div class="shape-item" data-shape="square">
+                        <div class="shape-icon">□</div>
+                        <div class="shape-name">Square</div>
+                    </div>
+                    <div class="shape-item" data-shape="circle">
+                        <div class="shape-icon">○</div>
+                        <div class="shape-name">Circle</div>
+                    </div>
+                    <div class="shape-item" data-shape="triangle">
+                        <div class="shape-icon">△</div>
+                        <div class="shape-name">Triangle</div>
+                    </div>
+                    <div class="shape-item" data-shape="rhombus">
+                        <div class="shape-icon">◇</div>
+                        <div class="shape-name">Rhombus</div>
+                    </div>
+                    <div class="shape-item" data-shape="kite">
+                        <div class="shape-icon">🪁</div>
+                        <div class="shape-name">Kite</div>
+                    </div>
+                    <div class="shape-item" data-shape="parallelogram">
+                        <div class="shape-icon">▱</div>
+                        <div class="shape-name">Parallelogram</div>
+                    </div>
+                    <div class="shape-item" data-shape="trapezoid">
+                        <div class="shape-icon">⏢</div>
+                        <div class="shape-name">Trapezoid</div>
+                    </div>
+                    <div class="shape-item" data-shape="ellipse">
+                        <div class="shape-icon">○</div>
+                        <div class="shape-name">Ellipse</div>
+                    </div>
+                    
+                    <!-- 3D Shapes -->
+                    <div class="shape-item" data-shape="cube">
+                        <div class="shape-icon">◼</div>
+                        <div class="shape-name">Cube</div>
+                    </div>
+                    <div class="shape-item" data-shape="cuboid">
+                        <div class="shape-icon">▯</div>
+                        <div class="shape-name">Cuboid</div>
+                    </div>
+                    <div class="shape-item" data-shape="sphere">
+                        <div class="shape-icon">●</div>
+                        <div class="shape-name">Sphere</div>
+                    </div>
+                    <div class="shape-item" data-shape="cylinder">
+                        <div class="shape-icon">⏢</div>
+                        <div class="shape-name">Cylinder</div>
+                    </div>
+                    <div class="shape-item" data-shape="cone">
+                        <div class="shape-icon">△</div>
+                        <div class="shape-name">Cone</div>
+                    </div>
+                    <div class="shape-item" data-shape="pyramid">
+                        <div class="shape-icon">△</div>
+                        <div class="shape-name">Pyramid</div>
+                    </div>
+                    <div class="shape-item" data-shape="hemisphere">
+                        <div class="shape-icon">◐</div>
+                        <div class="shape-name">Hemisphere</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="calculator">
+                <div class="shape-title" id="shapeTitle">Select a Shape</div>
+                
+                <div class="input-section" id="inputSection">
+                    <p>Please select a shape from the left to start calculating.</p>
+                </div>
+                
+                <button id="calculateBtn" class="calculate-btn" disabled>Calculate</button>
+                
+                <div class="result-section" id="resultSection" style="display: none;">
+                    <h3>Results</h3>
+                    <div id="results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
