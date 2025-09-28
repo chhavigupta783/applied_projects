@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Equation Solver</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .display {
+            background: #1a1a1a;
+            color: white;
+            padding: 25px;
+            min-height: 120px;
+        }
+        
+        .equation {
+            font-size: 18px;
+            color: #ccc;
+            min-height: 30px;
+            word-wrap: break-word;
+            margin-bottom: 10px;
+        }
+        
+        .result {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2ecc71;
+            word-wrap: break-word;
+            min-height: 40px;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 25px;
+            background: #ecf0f1;
+        }
+        
+        .btn {
+            padding: 20px 10px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .number {
+            background: white;
+            color: #2c3e50;
+        }
+        
+        .operator {
+            background: #3498db;
+            color: white;
+        }
+        
+        .function {
+            background: #9b59b6;
+            color: white;
+        }
+        
+        .scientific {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .equals {
+            background: #2ecc71;
+            color: white;
+            grid-column: span 2;
+        }
+        
+        .clear {
+            background: #e67e22;
+            color: white;
+        }
+        
+        .history {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .history h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #ecf0f1;
+        }
+        
+        .history-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .history-item:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .history-equation {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .history-solution {
+            color: #2ecc71;
+            font-size: 14px;
+        }
+        
+        .empty-history {
+            text-align: center;
+            color: #bdc3c7;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="header">
+            <h1>🧮 Math Equation Solver</h1>
+            <p>Solve mathematical equations easily</p>
+        </div>
+        
+        <div class="display">
+            <div class="equation" id="equation">Enter your equation...</div>
+            <div class="result" id="result">0</div>
+        </div>
+        
+        <div class="buttons">
+            <!-- Row 1 -->
+            <button class="btn clear" onclick="clearAll()">AC</button>
+            <button class="btn clear" onclick="backspace()">⌫</button>
+            <button class="btn function" onclick="addToDisplay('(')">(</button>
+            <button class="btn function" onclick="addToDisplay(')')">)</button>
+            
+            <!-- Row 2 -->
+            <button class="btn number" onclick="addToDisplay('7')">7</button>
+            <button class="btn number" onclick="addToDisplay('8')">8</button>
+            <button class="btn number" onclick="addToDisplay('9')">9</button>
+            <button class="btn operator" onclick="addToDisplay('/')">÷</button>
+            
+            <!-- Row 3 -->
+            <button class="btn number" onclick="addToDisplay('4')">4</button>
+            <button class="btn number" onclick="addToDisplay('5')">5</button>
+            <button class="btn number" onclick="addToDisplay('6')">6</button>
+            <button class="btn operator" onclick="addToDisplay('*')">×</button>
+            
+            <!-- Row 4 -->
+            <button class="btn number" onclick="addToDisplay('1')">1</button>
+            <button class="btn number" onclick="addToDisplay('2')">2</button>
+            <button class="btn number" onclick="addToDisplay('3')">3</button>
+            <button class="btn operator" onclick="addToDisplay('-')">-</button>
+            
+            <!-- Row 5 -->
+            <button class="btn number" onclick="addToDisplay('0')">0</button>
+            <button class="btn number" onclick="addToDisplay('.')">.</button>
+            <button class="btn equals" onclick="solveEquation()">=</button>
+            <button class="btn operator" onclick="addToDisplay('+')">+</button>
+            
+            <!-- Scientific Functions -->
+            <button class="btn scientific" onclick="addToDisplay('π')">π</button>
+            <button class="btn scientific" onclick="addToDisplay('e')">e</button>
+            <button class="btn scientific" onclick="addToDisplay('^')">^</button>
+            <button class="btn scientific" onclick="addToDisplay('√(')">√</button>
+            
+            <!-- More Functions -->
+            <button class="btn scientific" onclick="addToDisplay('sin(')">sin</button>
+            <button class="btn scientific" onclick="addToDisplay('cos(')">cos</button>
+            <button class="btn scientific" onclick="addToDisplay('tan(')">tan</button>
+            <button class="btn scientific" onclick="addToDisplay('log(')">log</button>
+            
+            <!-- Variables -->
+            <button class="btn function" onclick="addToDisplay('x')">x</button>
+            <button class="btn function" onclick="addToDisplay('=')">=</button>
+        </div>
+        
+        <div class="history">
+            <h3>📚 Calculation History</h3>
+            <div id="historyList">
+                <div class="empty-history">No calculations yet</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEquation = '';
+        let calculationHistory = [];
+        
+        function addToDisplay(value) {
+            const equationElement = document.getElementById('equation');
+            const resultElement = document.getElementById('result');
+            
+            // Clear if there's a previous result
+            if (resultElement.textContent !== '0' && !resultElement.textContent.includes('Enter')) {
+                if ('+-*/^'.includes(value)) {
+                    // Continue with result
+                    currentEquation = resultElement.textContent.replace('Result: ', '').replace('x = ', '') + value;
+                    equationElement.textContent = currentEquation;
+                    resultElement.textContent = '0';
+                } else {
+                    clearAll();
+                }
+            }
+            
+            if (equationElement.textContent === 'Enter your equation...') {
+                equationElement.textContent = '';
+            }
+            
+            currentEquation += value;
+            equationElement.textContent = currentEquation;
+        }
+        
+        function clearAll() {
+            currentEquation = '';
+            document.getElementById('equation').textContent = 'Enter your equation...';
+            document.getElementById('result').textContent = '0';
+        }
+        
+        function backspace() {
+            if (currentEquation.length > 0) {
+                currentEquation = currentEquation.slice(0, -1);
+                document.getElementById('equation').textContent = currentEquation || 'Enter your equation...';
+            }
+        }
+        
+        async function solveEquation() {
+            if (!currentEquation.trim()) {
+                document.getElementById('result').textContent = 'Please enter an equation';
+                return;
+            }
+            
+            try {
+                document.getElementById('result').textContent = 'Solving...';
+                
+                const response = await fetch('/solve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ equation: currentEquation })
+                });
+                
+                const data = await response.json();
+                document.getElementById('result').textContent = data.solution;
+                
+                // Add to history
+                addToHistory(currentEquation, data.solution);
+                
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: Could not solve equation';
+            }
+        }
+        
+        function addToHistory(equation, solution) {
+            // Add to beginning of history array
+            calculationHistory.unshift({
+                equation: equation,
+                solution: solution,
+                timestamp: new Date().toLocaleTimeString()
+            });
+            
+            // Keep only last 10 calculations
+            if (calculationHistory.length > 10) {
+                calculationHistory.pop();
+            }
+            
+            updateHistoryDisplay();
+        }
+        
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            
+            if (calculationHistory.length === 0) {
+                historyList.innerHTML = '<div class="empty-history">No calculations yet</div>';
+                return;
+            }
+            
+            historyList.innerHTML = '';
+            
+            calculationHistory.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-equation">${item.equation}</div>
+                    <div class="history-solution">${item.solution} • ${item.timestamp}</div>
+                `;
+                
+                historyItem.onclick = () => {
+                    currentEquation = item.equation;
+                    document.getElementById('equation').textContent = item.equation;
+                    document.getElementById('result').textContent = item.solution;
+                };
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            // Numbers and operators
+            if (key >= '0' && key <= '9') {
+                addToDisplay(key);
+            } else if (key === '.') {
+                addToDisplay('.');
+            } else if (key === '+') {
+                addToDisplay('+');
+            } else if (key === '-') {
+                addToDisplay('-');
+            } else if (key === '*') {
+                addToDisplay('*');
+            } else if (key === '/') {
+                event.preventDefault();
+                addToDisplay('/');
+            } else if (key === 'Enter' || key === '=') {
+                event.preventDefault();
+                solveEquation();
+            } else if (key === 'Escape') {
+                clearAll();
+            } else if (key === 'Backspace') {
+                backspace();
+            } else if (key === '(') {
+                addToDisplay('(');
+            } else if (key === ')') {
+                addToDisplay(')');
+            } else if (key === '^') {
+                addToDisplay('^');
+            } else if (key === 'x' || key === 'X') {
+                addToDisplay('x');
+            } else if (key === 'p' || key === 'P') {
+                event.preventDefault();
+                addToDisplay('π');
+            }
+        });
+        
+        // Initialize
+        updateHistoryDisplay();
+    </script>
+</body>
+</html>
