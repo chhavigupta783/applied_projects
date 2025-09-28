@@ -1,0 +1,442 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Equations Solver - 2 Variables</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .input-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .equation-input {
+            margin-bottom: 25px;
+        }
+        
+        .equation-input label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+        
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .equation-box {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 18px;
+            background: white;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .example {
+            font-size: 14px;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        .solve-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+            display: block;
+            margin: 20px auto;
+        }
+        
+        .solve-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .solve-btn:active {
+            transform: translateY(0);
+        }
+        
+        .results-section {
+            padding: 30px;
+        }
+        
+        .results-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+        
+        .steps-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 2px solid #e9ecef;
+        }
+        
+        .step {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .step-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-right: 8px;
+        }
+        
+        .final-solution {
+            background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+            color: white;
+            border-left-color: #27ae60 !important;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .verification {
+            background: #fff3cd !important;
+            border-left-color: #ffc107 !important;
+            color: #856404;
+        }
+        
+        .error {
+            background: #f8d7da !important;
+            border-left-color: #dc3545 !important;
+            color: #721c24;
+        }
+        
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 10px;
+        }
+        
+        .key-btn {
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .key-btn:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .keyboard {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧮 Linear Equations Solver</h1>
+            <p>Solve two equations with two variables (x and y)</p>
+        </div>
+        
+        <div class="input-section">
+            <div class="equation-input">
+                <label>Equation 1:</label>
+                <div class="input-group">
+                    <div class="equation-box" id="equation1" contenteditable="true">2x + 3y = 12</div>
+                </div>
+                <div class="example">Example: 2x + 3y = 12 or x - y = 5</div>
+            </div>
+            
+            <div class="equation-input">
+                <label>Equation 2:</label>
+                <div class="input-group">
+                    <div class="equation-box" id="equation2" contenteditable="true">3x - y = 7</div>
+                </div>
+                <div class="example">Example: 3x - y = 7 or 5x + 2y = 8</div>
+            </div>
+            
+            <!-- Virtual Keyboard -->
+            <div class="keyboard">
+                <div class="key-btn" onclick="insertText('x')">x</div>
+                <div class="key-btn" onclick="insertText('y')">y</div>
+                <div class="key-btn" onclick="insertText('+')">+</div>
+                <div class="key-btn" onclick="insertText('-')">-</div>
+                <div class="key-btn" onclick="insertText('*')">×</div>
+                <div class="key-btn" onclick="insertText('/')">÷</div>
+                <div class="key-btn" onclick="insertText('1')">1</div>
+                <div class="key-btn" onclick="insertText('2')">2</div>
+                <div class="key-btn" onclick="insertText('3')">3</div>
+                <div class="key-btn" onclick="insertText('4')">4</div>
+                <div class="key-btn" onclick="insertText('5')">5</div>
+                <div class="key-btn" onclick="insertText('6')">6</div>
+                <div class="key-btn" onclick="insertText('7')">7</div>
+                <div class="key-btn" onclick="insertText('8')">8</div>
+                <div class="key-btn" onclick="insertText('9')">9</div>
+                <div class="key-btn" onclick="insertText('0')">0</div>
+                <div class="key-btn" onclick="insertText('.')">.</div>
+                <div class="key-btn" onclick="insertText('=')">=</div>
+                <div class="key-btn" onclick="clearEquation()" style="background:#e74c3c;color:white;">Clear</div>
+                <div class="key-btn" onclick="backspaceText()" style="background:#f39c12;color:white;">⌫</div>
+            </div>
+            
+            <button class="solve-btn" onclick="solveEquations()">
+                🎯 Solve Equations & Get Step-by-Step Solution
+            </button>
+        </div>
+        
+        <div class="results-section">
+            <h2>📝 Step-by-Step Solution</h2>
+            <div class="steps-container" id="stepsContainer">
+                <div class="loading" id="loadingText">Enter equations and click solve to see the solution</div>
+                <div id="stepsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEquation = 1;
+        
+        // Set focus to first equation
+        document.getElementById('equation1').focus();
+        
+        function insertText(text) {
+            const equationBox = document.getElementById(`equation${currentEquation}`);
+            const selection = window.getSelection();
+            
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(document.createTextNode(text));
+                
+                // Move cursor to end
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                equationBox.textContent += text;
+            }
+            
+            equationBox.focus();
+        }
+        
+        function clearEquation() {
+            document.getElementById(`equation${currentEquation}`).textContent = '';
+        }
+        
+        function backspaceText() {
+            const equationBox = document.getElementById(`equation${currentEquation}`);
+            if (equationBox.textContent.length > 0) {
+                equationBox.textContent = equationBox.textContent.slice(0, -1);
+            }
+        }
+        
+        // Switch between equations when clicked
+        document.getElementById('equation1').addEventListener('click', () => currentEquation = 1);
+        document.getElementById('equation2').addEventListener('click', () => currentEquation = 2);
+        
+        async function solveEquations() {
+            const eq1 = document.getElementById('equation1').textContent.trim();
+            const eq2 = document.getElementById('equation2').textContent.trim();
+            
+            if (!eq1 || !eq2) {
+                showError('Please enter both equations');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('loadingText').style.display = 'block';
+            document.getElementById('stepsList').innerHTML = '';
+            document.getElementById('loadingText').textContent = 'Solving equations';
+            
+            try {
+                const response = await fetch('/solve_linear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        equation1: eq1,
+                        equation2: eq2
+                    })
+                });
+                
+                const data = await response.json();
+                
+                document.getElementById('loadingText').style.display = 'none';
+                
+                if (data.success) {
+                    displaySteps(data.steps);
+                } else {
+                    showError(data.error);
+                }
+                
+            } catch (error) {
+                document.getElementById('loadingText').style.display = 'none';
+                showError('Network error: Could not solve equations');
+            }
+        }
+        
+        function displaySteps(steps) {
+            const stepsList = document.getElementById('stepsList');
+            stepsList.innerHTML = '';
+            
+            steps.forEach((step, index) => {
+                const stepElement = document.createElement('div');
+                stepElement.className = 'step';
+                
+                // Add special styling for certain steps
+                if (step.includes('✅ Final Solution')) {
+                    stepElement.classList.add('final-solution');
+                } else if (step.includes('🔍 Verification')) {
+                    stepElement.classList.add('verification');
+                } else if (step.includes('Error') || step.includes('No unique solution')) {
+                    stepElement.classList.add('error');
+                }
+                
+                // Add step number for actual steps
+                if (step.startsWith('Step') || step.includes('Calculate') || step.includes('Given')) {
+                    stepElement.innerHTML = `<span class="step-number">${index + 1}.</span> ${step}`;
+                } else {
+                    stepElement.textContent = step;
+                }
+                
+                stepsList.appendChild(stepElement);
+            });
+        }
+        
+        function showError(message) {
+            const stepsList = document.getElementById('stepsList');
+            stepsList.innerHTML = '';
+            
+            const errorElement = document.createElement('div');
+            errorElement.className = 'step error';
+            errorElement.textContent = message;
+            stepsList.appendChild(errorElement);
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                solveEquations();
+            } else if (event.key === '1') {
+                currentEquation = 1;
+                document.getElementById('equation1').focus();
+            } else if (event.key === '2') {
+                currentEquation = 2;
+                document.getElementById('equation2').focus();
+            }
+        });
+        
+        // Example equations for quick testing
+        function loadExample(exampleNum) {
+            const examples = [
+                { eq1: "2x + 3y = 12", eq2: "3x - y = 7" },
+                { eq1: "x + y = 10", eq2: "2x - y = 5" },
+                { eq1: "3x + 2y = 8", eq2: "x - y = 1" }
+            ];
+            
+            if (exampleNum >= 0 && exampleNum < examples.length) {
+                document.getElementById('equation1').textContent = examples[exampleNum].eq1;
+                document.getElementById('equation2').textContent = examples[exampleNum].eq2;
+            }
+        }
+        
+        // Load first example by default
+        loadExample(0);
+    </script>
+</body>
+</html>
