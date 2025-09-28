@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3 Variable Equation Solver - Substitution Method</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>3 Variable Linear Equation Solver</h1>
+            <p>Substitution Method - Windows 7 Compatible</p>
+        </div>
+        
+        <div class="input-section">
+            <div class="equations-grid">
+                <div class="equation">
+                    <h3>Equation 1</h3>
+                    <div class="input-group">
+                        <label>x coefficient (a₁)</label>
+                        <input type="number" id="a1" value="2" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>y coefficient (b₁)</label>
+                        <input type="number" id="b1" value="1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>z coefficient (c₁)</label>
+                        <input type="number" id="c1" value="1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Constant (d₁)</label>
+                        <input type="number" id="d1" value="10" step="any">
+                    </div>
+                </div>
+                
+                <div class="equation">
+                    <h3>Equation 2</h3>
+                    <div class="input-group">
+                        <label>x coefficient (a₂)</label>
+                        <input type="number" id="a2" value="3" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>y coefficient (b₂)</label>
+                        <input type="number" id="b2" value="2" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>z coefficient (c₂)</label>
+                        <input type="number" id="c2" value="3" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Constant (d₂)</label>
+                        <input type="number" id="d2" value="18" step="any">
+                    </div>
+                </div>
+                
+                <div class="equation">
+                    <h3>Equation 3</h3>
+                    <div class="input-group">
+                        <label>x coefficient (a₃)</label>
+                        <input type="number" id="a3" value="1" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>y coefficient (b₃)</label>
+                        <input type="number" id="b3" value="4" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>z coefficient (c₃)</label>
+                        <input type="number" id="c3" value="9" step="any">
+                    </div>
+                    <div class="input-group">
+                        <label>Constant (d₃)</label>
+                        <input type="number" id="d3" value="16" step="any">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button class="solve-btn" onclick="solveEquations()">Solve Using Substitution</button>
+                <button class="clear-btn" onclick="clearInputs()">Clear All</button>
+            </div>
+        </div>
+        
+        <div class="result-section">
+            <div id="result" class="hidden">
+                <div class="result-box">
+                    <div class="final-solution" id="solution"></div>
+                </div>
+                <div class="steps-container">
+                    <h3>Step-by-Step Solution</h3>
+                    <div class="steps" id="steps"></div>
+                </div>
+            </div>
+            <div id="error" class="error hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        function solveEquations() {
+            // Get input values
+            const data = {
+                a1: document.getElementById('a1').value,
+                b1: document.getElementById('b1').value,
+                c1: document.getElementById('c1').value,
+                d1: document.getElementById('d1').value,
+                a2: document.getElementById('a2').value,
+                b2: document.getElementById('b2').value,
+                c2: document.getElementById('c2').value,
+                d2: document.getElementById('d2').value,
+                a3: document.getElementById('a3').value,
+                b3: document.getElementById('b3').value,
+                c3: document.getElementById('c3').value,
+                d3: document.getElementById('d3').value
+            };
+            
+            // Show loading
+            document.getElementById('error').classList.add('hidden');
+            document.getElementById('result').classList.add('hidden');
+            
+            fetch('/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.error) {
+                    showError(result.error);
+                } else {
+                    showResult(result);
+                }
+            })
+            .catch(error => {
+                showError('Network error: ' + error.message);
+            });
+        }
+        
+        function showResult(result) {
+            document.getElementById('error').classList.add('hidden');
+            document.getElementById('result').classList.remove('hidden');
+            
+            // Show final solution
+            document.getElementById('solution').innerHTML = `
+                <strong>Final Solution:</strong><br>
+                x = ${result.x}, y = ${result.y}, z = ${result.z}
+            `;
+            
+            // Show steps
+            let stepsHtml = '';
+            result.steps.forEach(step => {
+                stepsHtml += `
+                    <div class="step">
+                        <div class="step-header">
+                            <span class="step-number">Step ${step.step}</span>
+                            <span class="step-title">${step.title}</span>
+                        </div>
+                        <div class="step-description">${step.description}</div>
+                        <div class="step-equations">
+                            ${step.equations.map(eq => `<div class="equation">${eq}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('steps').innerHTML = stepsHtml;
+        }
+        
+        function showError(message) {
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('error').textContent = 'Error: ' + message;
+        }
+        
+        function clearInputs() {
+            const inputs = document.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => input.value = '');
+            document.getElementById('result').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+        }
+        
+        // Enter key support
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    solveEquations();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
