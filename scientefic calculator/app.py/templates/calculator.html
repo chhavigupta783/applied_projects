@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Scientific Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="calculator">
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="switchTab('basic')">Basic</button>
+            <button class="tab-button" onclick="switchTab('scientific')">Scientific</button>
+            <button class="tab-button" onclick="switchTab('statistics')">Statistics</button>
+            <button class="tab-button" onclick="switchTab('converter')">Converter</button>
+        </div>
+        
+        <div class="display-container">
+            <div class="history" id="history"></div>
+            <div class="display" id="display">0</div>
+            <div class="mode-indicator" id="mode-indicator">DEG</div>
+        </div>
+        
+        <div class="memory-display" id="memory-display">Memory: Empty</div>
+        
+        <div class="menu">
+            <button class="mode-toggle" onclick="toggleMode()">DEG/RAD</button>
+            <button class="clear" onclick="clearAll()">AC</button>
+            <button class="clear" onclick="clearEntry()">CE</button>
+        </div>
+        
+        <!-- Basic Tab -->
+        <div id="basic" class="tab-content active-tab">
+            <div class="buttons">
+                <!-- Row 1 -->
+                <button class="memory" onclick="memoryClear()">MC</button>
+                <button class="memory" onclick="memoryRecall()">MR</button>
+                <button class="memory" onclick="memoryAdd()">M+</button>
+                <button class="memory" onclick="memorySubtract()">M-</button>
+                <button class="function" onclick="backspace()">⌫</button>
+                
+                <!-- Row 2 -->
+                <button class="function" onclick="addToDisplay('(')">(</button>
+                <button class="function" onclick="addToDisplay(')')">)</button>
+                <button class="function" onclick="percentage()">%</button>
+                <button class="function" onclick="addToDisplay('^')">x^y</button>
+                <button class="function" onclick="squareRoot()">√</button>
+                
+                <!-- Row 3 -->
+                <button class="number" onclick="addToDisplay('7')">7</button>
+                <button class="number" onclick="addToDisplay('8')">8</button>
+                <button class="number" onclick="addToDisplay('9')">9</button>
+                <button class="operator" onclick="addToDisplay('/')">÷</button>
+                <button class="function" onclick="factorial()">x!</button>
+                
+                <!-- Row 4 -->
+                <button class="number" onclick="addToDisplay('4')">4</button>
+                <button class="number" onclick="addToDisplay('5')">5</button>
+                <button class="number" onclick="addToDisplay('6')">6</button>
+                <button class="operator" onclick="addToDisplay('*')">×</button>
+                <button class="function" onclick="addToDisplay('π')">π</button>
+                
+                <!-- Row 5 -->
+                <button class="number" onclick="addToDisplay('1')">1</button>
+                <button class="number" onclick="addToDisplay('2')">2</button>
+                <button class="number" onclick="addToDisplay('3')">3</button>
+                <button class="operator" onclick="addToDisplay('-')">-</button>
+                <button class="function" onclick="addToDisplay('e')">e</button>
+                
+                <!-- Row 6 -->
+                <button class="number" onclick="addToDisplay('0')">0</button>
+                <button class="number" onclick="addToDisplay('.')">.</button>
+                <button class="equals" onclick="calculate()">=</button>
+                <button class="operator" onclick="addToDisplay('+')">+</button>
+            </div>
+        </div>
+        
+        <!-- Scientific Tab -->
+        <div id="scientific" class="tab-content">
+            <div class="buttons">
+                <!-- Row 1 -->
+                <button class="scientific" onclick="sin()">sin</button>
+                <button class="scientific" onclick="cos()">cos</button>
+                <button class="scientific" onclick="tan()">tan</button>
+                <button class="scientific" onclick="log()">log</button>
+                <button class="scientific" onclick="ln()">ln</button>
+                
+                <!-- Row 2 -->
+                <button class="scientific" onclick="asin()">sin⁻¹</button>
+                <button class="scientific" onclick="acos()">cos⁻¹</button>
+                <button class="scientific" onclick="atan()">tan⁻¹</button>
+                <button class="scientific" onclick="exp()">e^x</button>
+                <button class="scientific" onclick="power10()">10^x</button>
+                
+                <!-- Row 3 -->
+                <button class="scientific" onclick="sinh()">sinh</button>
+                <button class="scientific" onclick="cosh()">cosh</button>
+                <button class="scientific" onclick="tanh()">tanh</button>
+                <button class="scientific" onclick="cubeRoot()">∛</button>
+                <button class="scientific" onclick="square()">x²</button>
+                
+                <!-- Row 4 -->
+                <button class="number" onclick="addToDisplay('7')">7</button>
+                <button class="number" onclick="addToDisplay('8')">8</button>
+                <button class="number" onclick="addToDisplay('9')">9</button>
+                <button class="operator" onclick="addToDisplay('/')">÷</button>
+                <button class="function" onclick="factorial()">x!</button>
+                
+                <!-- Row 5 -->
+                <button class="number" onclick="addToDisplay('4')">4</button>
+                <button class="number" onclick="addToDisplay('5')">5</button>
+                <button class="number" onclick="addToDisplay('6')">6</button>
+                <button class="operator" onclick="addToDisplay('*')">×</button>
+                <button class="function" onclick="addToDisplay('π')">π</button>
+                
+                <!-- Row 6 -->
+                <button class="number" onclick="addToDisplay('1')">1</button>
+                <button class="number" onclick="addToDisplay('2')">2</button>
+                <button class="number" onclick="addToDisplay('3')">3</button>
+                <button class="operator" onclick="addToDisplay('-')">-</button>
+                <button class="function" onclick="addToDisplay('e')">e</button>
+                
+                <!-- Row 7 -->
+                <button class="number" onclick="addToDisplay('0')">0</button>
+                <button class="number" onclick="addToDisplay('.')">.</button>
+                <button class="equals" onclick="calculate()">=</button>
+                <button class="operator" onclick="addToDisplay('+')">+</button>
+            </div>
+        </div>
+        
+        <!-- Statistics Tab -->
+        <div id="statistics" class="tab-content">
+            <div class="buttons">
+                <!-- Row 1 -->
+                <button class="scientific" onclick="addData()">Add Data</button>
+                <button class="scientific" onclick="clearData()">Clear Data</button>
+                <button class="scientific" onclick="mean()">Mean</button>
+                <button class="scientific" onclick="stdDev()">Std Dev</button>
+                <button class="scientific" onclick="variance()">Variance</button>
+                
+                <!-- Row 2 -->
+                <button class="scientific" onclick="combinations()">nCr</button>
+                <button class="scientific" onclick="permutations()">nPr</button>
+                <button class="scientific" onclick="sum()">Sum</button>
+                <button class="scientific" onclick="min()">Min</button>
+                <button class="scientific" onclick="max()">Max</button>
+                
+                <!-- Row 3 -->
+                <button class="number" onclick="addToDisplay('7')">7</button>
+                <button class="number" onclick="addToDisplay('8')">8</button>
+                <button class="number" onclick="addToDisplay('9')">9</button>
+                <button class="operator" onclick="addToDisplay('/')">÷</button>
+                <button class="function" onclick="factorial()">x!</button>
+                
+                <!-- Row 4 -->
+                <button class="number" onclick="addToDisplay('4')">4</button>
+                <button class="number" onclick="addToDisplay('5')">5</button>
+                <button class="number" onclick="addToDisplay('6')">6</button>
+                <button class="operator" onclick="addToDisplay('*')">×</button>
+                <button class="function" onclick="addToDisplay('π')">π</button>
+                
+                <!-- Row 5 -->
+                <button class="number" onclick="addToDisplay('1')">1</button>
+                <button class="number" onclick="addToDisplay('2')">2</button>
+                <button class="number" onclick="addToDisplay('3')">3</button>
+                <button class="operator" onclick="addToDisplay('-')">-</button>
+                <button class="function" onclick="addToDisplay('e')">e</button>
+                
+                <!-- Row 6 -->
+                <button class="number" onclick="addToDisplay('0')">0</button>
+                <button class="number" onclick="addToDisplay('.')">.</button>
+                <button class="equals" onclick="calculate()">=</button>
+                <button class="operator" onclick="addToDisplay('+')">+</button>
+            </div>
+        </div>
+        
+        <!-- Converter Tab -->
+        <div id="converter" class="tab-content">
+            <div class="buttons">
+                <!-- Row 1 -->
+                <button class="scientific" onclick="convertLength()">Length</button>
+                <button class="scientific" onclick="convertWeight()">Weight</button>
+                <button class="scientific" onclick="convertTemperature()">Temp</button>
+                <button class="scientific" onclick="convertArea()">Area</button>
+                <button class="scientific" onclick="convertVolume()">Volume</button>
+                
+                <!-- Row 2 -->
+                <button class="number" onclick="addToDisplay('7')">7</button>
+                <button class="number" onclick="addToDisplay('8')">8</button>
+                <button class="number" onclick="addToDisplay('9')">9</button>
+                <button class="operator" onclick="addToDisplay('/')">÷</button>
+                <button class="function" onclick="factorial()">x!</button>
+                
+                <!-- Row 3 -->
+                <button class="number" onclick="addToDisplay('4')">4</button>
+                <button class="number" onclick="addToDisplay('5')">5</button>
+                <button class="number" onclick="addToDisplay('6')">6</button>
+                <button class="operator" onclick="addToDisplay('*')">×</button>
+                <button class="function" onclick="addToDisplay('π')">π</button>
+                
+                <!-- Row 4 -->
+                <button class="number" onclick="addToDisplay('1')">1</button>
+                <button class="number" onclick="addToDisplay('2')">2</button>
+                <button class="number" onclick="addToDisplay('3')">3</button>
+                <button class="operator" onclick="addToDisplay('-')">-</button>
+                <button class="function" onclick="addToDisplay('e')">e</button>
+                
+                <!-- Row 5 -->
+                <button class="number" onclick="addToDisplay('0')">0</button>
+                <button class="number" onclick="addToDisplay('.')">.</button>
+                <button class="equals" onclick="calculate()">=</button>
+                <button class="operator" onclick="addToDisplay('+')">+</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/calculator.js') }}"></script>
+</body>
+</html>
